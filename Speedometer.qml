@@ -29,7 +29,7 @@ Item {
             width: 243
             height: 48
             color: "#ffffff"
-            font.pixelSize: 25
+            font.pixelSize: 20
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             text: currentAngle + " km/h\nEngine Status: On"
@@ -69,13 +69,28 @@ Item {
         }
     }
 
-    Image{
-        id: seatbeltWarning
-        source: "seatbelt.png"
-        x: parent.width/2 - width/2
+    Row{
+        spacing: 10
+        anchors.horizontalCenter: parent.horizontalCenter
         y: parent.height/2 + 145
-        /*initially, the warning is not visible [active]*/
-        visible: false
+        Image{
+            id: seatbeltWarning
+            source: "assets/seatbelt.png"
+            height:40
+            width:40
+            /*initially, the warning is not visible [active]*/
+            visible: false
+        }
+
+        Image{
+            id: doorsOpenWarning
+            source: "assets/doorsOpen.png"
+            height:40
+            width:40
+            /*initially, the warning is not visible [active]*/
+            visible: false
+        }
+
     }
 
     Rectangle {
@@ -133,6 +148,10 @@ Item {
 
     function changeSeatbeltWarning(warnState){
         seatbeltWarning.visible=warnState
+    }
+
+    function changeDoorsOpenWarning(warnState){
+        doorsOpenWarning.visible=warnState
     }
 
 }

@@ -21,6 +21,5 @@ int main(int argc, char *argv[])
     WarnMgr *warnMgr (new WarnMgr);
     engine.rootContext()->setContextProperty("warnMgr", warnMgr);
 
-
     return app.exec();
 }

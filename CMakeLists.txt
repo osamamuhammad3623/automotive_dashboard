@@ -20,7 +20,8 @@ qt_add_qml_module(appAutomotiveSpeedometer
         Speedometer.qml
 
     RESOURCES
-    seatbelt.png
+    assets/seatbelt.png
+    assets/doorsOpen.png
     SOURCES warnmgr.h warnmgr.cpp
 )
 
