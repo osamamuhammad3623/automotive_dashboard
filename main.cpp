@@ -17,7 +17,6 @@ int main(int argc, char *argv[])
         Qt::QueuedConnection);
     engine.load(url);
 
-
     WarnMgr *warnMgr (new WarnMgr);
     engine.rootContext()->setContextProperty("warnMgr", warnMgr);
 

@@ -6,7 +6,6 @@
 class WarnMgr : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(bool seatbeltWarning)
 
 public:
     explicit WarnMgr(QObject *parent = nullptr);

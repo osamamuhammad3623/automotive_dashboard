@@ -5,8 +5,9 @@ Item {
     width: 441
     height: 441
     visible: true
-    property int currentAngle: 0
+    property int currentAngle: 0 /* represting the speed */
     readonly property int initialAngle: 54
+    readonly property int speedThreshoild: 130
     readonly property int returnToZeroTime: 3000
 
     Rectangle {
@@ -102,7 +103,7 @@ Item {
         anchors.horizontalCenterOffset: 0
         width: 13
         height: 153
-        color: "#7b3131"
+        color: currentAngle>speedThreshoild? "red" : "#7b3131"
 
         Rectangle {
             id: rectTip
@@ -110,7 +111,7 @@ Item {
             y: parent.height-6
             width: 13
             height: 10
-            color: "#7b3131"
+            color: parent.color
             radius: 5
         }
 
@@ -133,6 +134,7 @@ Item {
             repeat: false
 
             onTriggered: {
+                /* set running to false to avoid animation loops */
                 meterAnimation.running=false
             }
         }
@@ -140,18 +142,19 @@ Item {
     }
 
     function engineTurnedOff(){
+        needle.color= "#7b3131"
         current_speed.text="0 km/h\nEngine Status: Off"
         meterAnimation.to=initialAngle
         meterAnimation.duration=returnToZeroTime
         needleTimer.start()
     }
 
-    function changeSeatbeltWarning(warnState){
-        seatbeltWarning.visible=warnState
+    function changeSeatbeltWarning(warningState){
+        seatbeltWarning.visible=warningState
     }
 
-    function changeDoorsOpenWarning(warnState){
-        doorsOpenWarning.visible=warnState
+    function changeDoorsOpenWarning(warningState){
+        doorsOpenWarning.visible=warningState
     }
 
 }

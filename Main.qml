@@ -5,8 +5,14 @@ Window {
     id: root
     width: 800
     height: 600
+    maximumHeight: height
+    minimumHeight: height
+    maximumWidth: width
+    minimumWidth: width
+
     visible: true
-    title: qsTr("Dashboard")
+    title: qsTr("DevLeague Automotive Dashboard")
+    color: "#293462"
 
     Slider{
         id: slider
@@ -18,7 +24,6 @@ Window {
             horizontalCenter: speedometer.horizontalCenter
         }
         y: 0.9*parent.height
-
     }
 
     Speedometer{
@@ -35,8 +40,15 @@ Window {
         id: controlColumn
         spacing: 10
         rightPadding: 80
-        leftPadding: parent.width * 0.05
+        leftPadding: 20
         anchors.verticalCenter: parent.verticalCenter
+
+        Text{
+            text: "Vehicle Simulation"
+            color: "white"
+            font.pixelSize: 25
+            bottomPadding: 10
+        }
 
         /* this warning logic is implemented in C++ */
         /*
@@ -44,8 +56,9 @@ Window {
             c++ backend emits a signal to notify QML to turn on/off the warning
         */
         Button{
-            id: enableSeatbeltWarning
             height: 30
+            width: 200
+            font.pixelSize: 15
             text: "Switch seatbelt warning"
             onClicked: {
                 /*QML calls C++*/
@@ -54,8 +67,9 @@ Window {
         }
 
         Button{
-            id: enableDoorsOpenWarning
             height: 30
+            width: 200
+            font.pixelSize: 15
             text: "Switch doors-open warning"
             onClicked: {
                 /*QML calls C++*/
@@ -66,9 +80,10 @@ Window {
 
         /* this button is all implemented in QML [no logic in C++] */
         Button{
-            id: engineOffBtn
             text: "Turn off Engine"
             height: 30
+            width: 200
+            font.pixelSize: 15
             onClicked: {
                 speedometer.engineTurnedOff()
             }
@@ -77,8 +92,8 @@ Window {
 
     Connections{
         target:warnMgr
-        /*C++ calls QML (signal/slot concept)*/
 
+        /*C++ calls QML (signal/slot concept)*/
         function onSeatbeltWarningChanged(warnState) {
             speedometer.changeSeatbeltWarning(warnState)
         }
