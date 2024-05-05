@@ -18,10 +18,13 @@ qt_add_qml_module(appAutomotiveSpeedometer
     QML_FILES
         Main.qml
         Speedometer.qml
+        Dashboard_Display.qml
+        MotorRpm.qml
 
     RESOURCES
     assets/seatbelt.png
     assets/doorsOpen.png
+    assets/temperature.png
     SOURCES warnmgr.h warnmgr.cpp
 )
 

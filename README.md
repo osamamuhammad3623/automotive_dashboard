@@ -1,11 +1,13 @@
 # Automotive Dashboard using QML and C++
 
 ## Description
-- This project simulates a vehicle dashboard (specifically, the speedometer)
-- You can change the vehicle speed and watch it reflects on the speedometer.
-- When the speed goes up to 130 km/h, the speed needle turns into Red color.
+- This project simulates a vehicle dashboard
+- You can change the vehicle speed and watch it reflects on the speedometer & motor RPM.
+- When the speed goes up to 130 km/h, the needles turn into Red color.
 - You can enable/disable some warnings (i.e. seat-belt warning).
 - You can turn off the engine and watch the speed needle goes back to zero.
+- You can set the vehicle mode [P, D, R and N].
+- Temperature & fuel level are constant (they can be easily changed using QML or C++).
 
 
 ## Communication between QtQuick (QML) & C++

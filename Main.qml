@@ -3,8 +3,8 @@ import QtQuick.Controls
 
 Window {
     id: root
-    width: 800
-    height: 600
+    width: 1600
+    height: 900
     maximumHeight: height
     minimumHeight: height
     maximumWidth: width
@@ -12,7 +12,49 @@ Window {
 
     visible: true
     title: qsTr("DevLeague Automotive Dashboard")
-    color: "#293462"
+    color: "#2f2f30"
+
+    Rectangle {
+        width: 1280
+        height: 550
+        color: "#23253e"
+        border.color: "#57b9fc"
+        border.width: 7
+        radius: 221
+
+        anchors{
+            verticalCenter: parent.verticalCenter
+            left: controlColumn.right
+        }
+
+        Speedometer{
+            id: speedometer
+            anchors{
+                right: display.left
+                rightMargin: 35
+                verticalCenter: parent.verticalCenter
+            }
+
+        }
+
+        Dashboard_Display{
+            id: display
+            anchors{
+                verticalCenter: parent.verticalCenter
+                horizontalCenter: parent.horizontalCenter
+            }
+
+        }
+
+        MotorRpm{
+            id: motor_rpm
+            anchors{
+                left: display.right
+                leftMargin: 35
+                verticalCenter: parent.verticalCenter
+            }
+        }
+    }
 
     Slider{
         id: slider
@@ -21,27 +63,20 @@ Window {
         to: 250
 
         onValueChanged: {
-            speedometer.currentAngle= value
+            speedometer.currentAngle=value
+            motor_rpm.currentAngle= value
         }
         anchors{
-            horizontalCenter: speedometer.horizontalCenter
+            horizontalCenter: parent.horizontalCenter
         }
-        y: 0.9*parent.height
+        y: 0.9*root.height
     }
 
-    Speedometer{
-        id: speedometer
-
-        anchors{
-            left: controlColumn.right
-            verticalCenter: parent.verticalCenter
-        }
-    }
 
     Column{
         id: controlColumn
         spacing: 10
-        rightPadding: 80
+        rightPadding: 50
         leftPadding: 20
         anchors.verticalCenter: parent.verticalCenter
 
@@ -52,7 +87,7 @@ Window {
             bottomPadding: 10
         }
 
-        /* this warning logic is implemented in C++ */
+        /* these warnings logic is implemented in C++ */
         /*
             QML button calls a C++ function to notify backend that warning btn is pressed
             c++ backend emits a signal to notify QML to turn on/off the warning
@@ -80,7 +115,17 @@ Window {
         }
 
 
-        /* this button is all implemented in QML [no logic in C++] */
+        /* these buttons are implemented in QML [no logic in C++] */
+        Button{
+            text: "Switch temperature warning"
+            height: 30
+            width: 200
+            font.pixelSize: 15
+            onClicked: {
+                motor_rpm.switchHotTempWarning()
+            }
+        }
+
         Button{
             text: "Turn off Engine"
             height: 30
@@ -88,8 +133,21 @@ Window {
             font.pixelSize: 15
             onClicked: {
                 speedometer.engineTurnedOff()
+                motor_rpm.engineTurnedOff()
             }
         }
+
+        ComboBox{
+            height: 30
+            width: 200
+            font.pixelSize: 15
+            model: ["P", "D", "N", "R"]
+            onCurrentTextChanged: {
+                display.current_veh_mode = currentText
+            }
+        }
+
+        /* any control option can be added (& connected to C++ backend), i.e. temperature & milage */
     }
 
     Connections{

@@ -17,9 +17,9 @@ Item {
         y: 0
         width: 441
         height: 441
-        color: "#322424"
-        border.color: "green"
-        border.width: 10
+        color: "#23253e"
+        border.color: "#57b9fc"
+        border.width: 7
         radius: 221
 
         Text {
@@ -92,7 +92,6 @@ Item {
             /*initially, the warning is not visible [active]*/
             visible: false
         }
-
     }
 
     Rectangle {
