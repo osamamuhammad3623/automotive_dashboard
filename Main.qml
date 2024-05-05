@@ -20,6 +20,9 @@ Window {
         from:0
         to: 250
 
+        onValueChanged: {
+            speedometer.currentAngle= value
+        }
         anchors{
             horizontalCenter: speedometer.horizontalCenter
         }
@@ -28,7 +31,6 @@ Window {
 
     Speedometer{
         id: speedometer
-        currentAngle: slider.value
 
         anchors{
             left: controlColumn.right

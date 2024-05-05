@@ -5,9 +5,10 @@ Item {
     width: 441
     height: 441
     visible: true
-    property int currentAngle: 0 /* represting the speed */
+    property int currentAngle /* represting the speed */
+    property string engineState: "On"
     readonly property int initialAngle: 54
-    readonly property int speedThreshoild: 130
+    readonly property int speedThreshold: 130
     readonly property int returnToZeroTime: 3000
 
     Rectangle {
@@ -33,7 +34,7 @@ Item {
             font.pixelSize: 20
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
-            text: currentAngle + " km/h\nEngine Status: On"
+            text: currentAngle + " km/h\nEngine Status: " + engineState
         }
 
         Rectangle {
@@ -103,7 +104,7 @@ Item {
         anchors.horizontalCenterOffset: 0
         width: 13
         height: 153
-        color: currentAngle>speedThreshoild? "red" : "#7b3131"
+        color: currentAngle>speedThreshold? "red" : "#7b3131"
 
         Rectangle {
             id: rectTip
@@ -120,7 +121,7 @@ Item {
             NumberAnimation on angle {
                 id: meterAnimation
                 /*if engine is turned off, the slider has no effect on the needle anymore*/
-                from:     currentAngle+initialAngle
+                from:     currentAngle+initialAngle+1 /* +1 to make the needle slightly vibrates */
                 to:       currentAngle+initialAngle
                 duration: 10
                 running:  true
@@ -135,15 +136,16 @@ Item {
 
             onTriggered: {
                 /* set running to false to avoid animation loops */
-                meterAnimation.running=false
+                meterAnimation.stop()
             }
         }
 
     }
 
     function engineTurnedOff(){
+        engineState = "Off"
         needle.color= "#7b3131"
-        current_speed.text="0 km/h\nEngine Status: Off"
+        current_speed.text = 0 + " km/h\nEngine Status: " + engineState
         meterAnimation.to=initialAngle
         meterAnimation.duration=returnToZeroTime
         needleTimer.start()
