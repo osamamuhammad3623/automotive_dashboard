@@ -137,6 +137,7 @@ Window {
             }
         }
 
+        /* this logic is implemented in C++ */
         Row{
             Text{
                 id: modeText
