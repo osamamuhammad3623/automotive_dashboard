@@ -26,6 +26,7 @@ qt_add_qml_module(appAutomotiveSpeedometer
     assets/doorsOpen.png
     assets/temperature.png
     SOURCES warnmgr.h warnmgr.cpp
+    SOURCES vehiclecontroller.h vehiclecontroller.cpp
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

@@ -2,6 +2,7 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include "warnmgr.h"
+#include "vehiclecontroller.h"
 
 int main(int argc, char *argv[])
 {
@@ -18,7 +19,9 @@ int main(int argc, char *argv[])
     engine.load(url);
 
     WarnMgr *warnMgr (new WarnMgr);
+    VehicleController *vehController = new VehicleController;
     engine.rootContext()->setContextProperty("warnMgr", warnMgr);
+    engine.rootContext()->setContextProperty("vehController", vehController);
 
     return app.exec();
 }

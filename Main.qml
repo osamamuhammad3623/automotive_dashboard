@@ -137,17 +137,52 @@ Window {
             }
         }
 
-        ComboBox{
-            height: 30
-            width: 200
-            font.pixelSize: 15
-            model: ["P", "D", "N", "R"]
-            onCurrentTextChanged: {
-                display.current_veh_mode = currentText
+        Row{
+            Text{
+                id: modeText
+                text: "Mode:"
+                font.pixelSize: 15
+                color: "white"
+                anchors.verticalCenter: parent.verticalCenter
+                rightPadding: 10
+            }
+
+            ComboBox{
+                height: 30
+                width: 200-modeText.width
+                font.pixelSize: 15
+                model: ["P", "D", "N", "R"]
+                onCurrentTextChanged: {
+                    vehController.vehModeChangedUi(currentText)
+                }
             }
         }
 
-        /* any control option can be added (& connected to C++ backend), i.e. temperature & milage */
+        Row{
+            Text{
+                id: tempText
+                text: "Temperature:"
+                font.pixelSize: 15
+                color: "white"
+                anchors.verticalCenter: parent.verticalCenter
+                rightPadding: 10
+            }
+
+            SpinBox{
+                height: 30
+                width: 200-tempText.width
+                font.pixelSize: 15
+                from: 0
+                to:200
+                value: 32
+
+                onValueChanged: {
+                    vehController.vehTempChangedUi(value)
+                }
+            }
+        }
+
+        /* any control option can be added (& connected to C++ backend), i.e. milage */
     }
 
     Connections{
@@ -163,6 +198,18 @@ Window {
         }
     }
 
+    Connections{
+        target:vehController
+
+        /*C++ calls QML (signal/slot concept)*/
+        function onVehModeChanged(newMode) {
+            display.changeVehMode(newMode)
+        }
+
+        function onVehTempChanged(newTemp) {
+            display.changeVehTemp(newTemp)
+        }
+    }
 }
 
 

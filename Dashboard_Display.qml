@@ -104,4 +104,13 @@ Rectangle {
         verticalAlignment: Text.AlignVCenter
         font.bold: false
     }
+
+    function changeVehMode(newMode){
+        current_veh_mode = newMode
+    }
+
+    function changeVehTemp(newTemp){
+        current_veh_temp = newTemp
+    }
+
 }
