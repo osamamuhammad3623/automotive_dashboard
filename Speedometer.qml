@@ -5,11 +5,11 @@ Item {
     width: 441
     height: 441
     visible: true
-    property int currentAngle /* represting the speed */
+    property int currentAngle
     property string engineState: "On"
-    readonly property int initialAngle: 54
+    readonly property int initialAngle: 55
     readonly property int speedThreshold: 130
-    readonly property int returnToZeroTime: 3000
+    readonly property int returnToZeroTime: (((currentAngle-initialAngle)/20)*1000)
 
     Rectangle {
         id: root
@@ -34,7 +34,7 @@ Item {
             font.pixelSize: 20
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
-            text: currentAngle + " km/h\nEngine Status: " + engineState
+            text: (engineState=="On" ? (currentAngle) : (0))  + " km/h\nEngine Status: " + engineState
         }
 
         Rectangle {
@@ -71,28 +71,28 @@ Item {
         }
     }
 
-    Row{
-        spacing: 10
-        anchors.horizontalCenter: parent.horizontalCenter
-        y: parent.height/2 + 145
-        Image{
-            id: seatbeltWarning
-            source: "assets/seatbelt.png"
-            height:40
-            width:40
-            /*initially, the warning is not visible [active]*/
-            visible: false
-        }
+    // Row{
+    //     spacing: 10
+    //     anchors.horizontalCenter: parent.horizontalCenter
+    //     y: parent.height/2 + 145
+    //     Image{
+    //         id: seatbeltWarning
+    //         source: "assets/seatbelt.png"
+    //         height:40
+    //         width:40
+    //         /*initially, the warning is not visible [active]*/
+    //         visible: false
+    //     }
 
-        Image{
-            id: doorsOpenWarning
-            source: "assets/doorsOpen.png"
-            height:40
-            width:40
-            /*initially, the warning is not visible [active]*/
-            visible: false
-        }
-    }
+    //     Image{
+    //         id: doorsOpenWarning
+    //         source: "assets/doorsOpen.png"
+    //         height:40
+    //         width:40
+    //         /*initially, the warning is not visible [active]*/
+    //         visible: false
+    //     }
+    // }
 
     Rectangle {
         id: needle
@@ -103,7 +103,7 @@ Item {
         anchors.horizontalCenterOffset: 0
         width: 13
         height: 153
-        color: currentAngle>speedThreshold? "red" : "#7b3131"
+        color: ((currentAngle>speedThreshold)&&(engineState=="On"))? "red" : "#7b3131"
 
         Rectangle {
             id: rectTip
@@ -119,12 +119,12 @@ Item {
             origin.x:6.5
             NumberAnimation on angle {
                 id: meterAnimation
-                /*if engine is turned off, the slider has no effect on the needle anymore*/
-                from:     currentAngle+initialAngle+1 /* +1 to make the needle slightly vibrates */
-                to:       currentAngle+initialAngle
-                duration: 10
-                running:  true
-                loops:Animation.Infinite
+                /* +1 to make the needle slightly vibrates */
+                from:     currentAngle+initialAngle+1
+                to:       engineState=="On"? currentAngle+initialAngle : initialAngle
+                /* to make time-to-zero relative to the last speed */
+                duration: engineState=="On"? 10 : returnToZeroTime
+                loops:    Animation.Infinite
             }
         }
 
@@ -135,27 +135,18 @@ Item {
 
             onTriggered: {
                 /* set running to false to avoid animation loops */
-                meterAnimation.stop()
+                meterAnimation.running = false
             }
         }
-
     }
 
     function engineTurnedOff(){
         engineState = "Off"
-        needle.color= "#7b3131"
-        current_speed.text = 0 + " km/h\nEngine Status: " + engineState
-        meterAnimation.to=initialAngle
-        meterAnimation.duration=returnToZeroTime
         needleTimer.start()
     }
 
-    function changeSeatbeltWarning(warningState){
-        seatbeltWarning.visible=warningState
+    function engineTurnedOn(){
+        engineState = "On"
+        meterAnimation.running = true
     }
-
-    function changeDoorsOpenWarning(warningState){
-        doorsOpenWarning.visible=warningState
-    }
-
 }

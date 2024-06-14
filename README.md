@@ -5,7 +5,7 @@
 - You can change the vehicle speed and watch it reflects on the speedometer & motor RPM.
 - When the speed goes up to 130 km/h, the needles turn into Red color.
 - You can enable/disable some warnings (i.e. seat-belt warning).
-- You can turn off the engine and watch the speed needle goes back to zero.
+- You can turn on/off the engine and watch the speed needle goes back to zero when engine is turned off.
 - You can set the vehicle mode [P, D, R and N].
 - Temperature & fuel level are constant (they can be easily changed using QML or C++).
 

@@ -15,12 +15,14 @@ Window {
     color: "#2f2f30"
 
     Rectangle {
+        id: dashboard
         width: 1280
         height: 550
         color: "#23253e"
         border.color: "#57b9fc"
         border.width: 7
         radius: 221
+        property bool tempWarning: false
 
         anchors{
             verticalCenter: parent.verticalCenter
@@ -43,7 +45,6 @@ Window {
                 verticalCenter: parent.verticalCenter
                 horizontalCenter: parent.horizontalCenter
             }
-
         }
 
         MotorRpm{
@@ -54,6 +55,80 @@ Window {
                 verticalCenter: parent.verticalCenter
             }
         }
+
+        Row{
+            property int iconSize: 50
+            spacing: 10
+            anchors{
+                horizontalCenter: parent.horizontalCenter
+                bottom: parent.bottom
+                bottomMargin: 50
+            }
+            Image{
+                id: hotTempWarning
+                source: "assets/temperature.png"
+                height: parent.iconSize
+                width:  parent.iconSize
+                /*initially, the warning is not visible [active]*/
+                visible: dashboard.tempWarning
+            }
+
+            Image{
+                id: seatbeltWarning
+                source: "assets/seatbelt.png"
+                height: parent.iconSize
+                width:  parent.iconSize
+                /*initially, the warning is not visible [active]*/
+                visible: false
+            }
+
+            Image{
+                id: doorsOpenWarning
+                source: "assets/doorsOpen.png"
+                height: parent.iconSize
+                width:  parent.iconSize
+                /*initially, the warning is not visible [active]*/
+                visible: false
+            }
+        }
+
+        function changeSeatbeltWarning(warningState){
+            seatbeltWarning.visible=warningState
+        }
+
+        function changeDoorsOpenWarning(warningState){
+            doorsOpenWarning.visible=warningState
+        }
+
+        function switchHotTempWarning(){
+            tempWarning= !tempWarning
+        }
+
+        Connections{
+            target:warnMgr
+
+            /*C++ calls QML (signal/slot concept)*/
+            function onSeatbeltWarningChanged(warnState) {
+                dashboard.changeSeatbeltWarning(warnState)
+            }
+
+            function onDoorsOpenWarningChanged(warnState) {
+                dashboard.changeDoorsOpenWarning(warnState)
+            }
+        }
+
+        Connections{
+            target:vehController
+
+            /*C++ calls QML (signal/slot concept)*/
+            function onVehModeChanged(newMode) {
+                display.changeVehMode(newMode)
+            }
+
+            function onVehTempChanged(newTemp) {
+                display.changeVehTemp(newTemp)
+            }
+        }
     }
 
     Slider{
@@ -62,22 +137,39 @@ Window {
         from:0
         to: 250
 
-        onValueChanged: {
-            speedometer.currentAngle=value
-            motor_rpm.currentAngle= value
-        }
         anchors{
             horizontalCenter: parent.horizontalCenter
         }
         y: 0.9*root.height
+
+        Binding{
+            speedometer.currentAngle: slider.value
+            when: speedometer.engineState="On"
+        }
+
+        Binding{
+            motor_rpm.currentAngle: slider.value
+            when: motor_rpm.engineState="On"
+        }
     }
 
+    Text{
+        anchors{
+            bottom: slider.top
+            bottomMargin: 10
+            horizontalCenter: parent.horizontalCenter
+        }
+        text: "Speed"
+        font.pixelSize: 25
+        color: "white"
+
+    }
 
     Column{
         id: controlColumn
         spacing: 10
         rightPadding: 50
-        leftPadding: 20
+        leftPadding: 30
         anchors.verticalCenter: parent.verticalCenter
 
         Text{
@@ -122,7 +214,18 @@ Window {
             width: 200
             font.pixelSize: 15
             onClicked: {
-                motor_rpm.switchHotTempWarning()
+                dashboard.switchHotTempWarning()
+            }
+        }
+
+        Button{
+            text: "Turn on Engine"
+            height: 30
+            width: 200
+            font.pixelSize: 15
+            onClicked: {
+                speedometer.engineTurnedOn()
+                motor_rpm.engineTurnedOn()
             }
         }
 
@@ -186,31 +289,6 @@ Window {
         /* any control option can be added (& connected to C++ backend), i.e. milage */
     }
 
-    Connections{
-        target:warnMgr
-
-        /*C++ calls QML (signal/slot concept)*/
-        function onSeatbeltWarningChanged(warnState) {
-            speedometer.changeSeatbeltWarning(warnState)
-        }
-
-        function onDoorsOpenWarningChanged(warnState) {
-            speedometer.changeDoorsOpenWarning(warnState)
-        }
-    }
-
-    Connections{
-        target:vehController
-
-        /*C++ calls QML (signal/slot concept)*/
-        function onVehModeChanged(newMode) {
-            display.changeVehMode(newMode)
-        }
-
-        function onVehTempChanged(newTemp) {
-            display.changeVehTemp(newTemp)
-        }
-    }
 }
 
 

@@ -6,10 +6,10 @@ Item {
     height: 441
     visible: true
     property int currentAngle /* represting the speed */
-    property bool hotTemp: false
-    readonly property int initialAngle: 54
+    property string engineState: "On"
+    readonly property int initialAngle: 55
     readonly property int speedThreshold: 130
-    readonly property int returnToZeroTime: 3000
+    readonly property int returnToZeroTime: (((currentAngle-initialAngle)/20)*1000)
 
     Rectangle {
         id: root
@@ -34,7 +34,7 @@ Item {
             font.pixelSize: 30
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
-            text: qsTr((currentAngle/25)+ " *1000 RPM")
+            text: (engineState=="On"? (currentAngle/25) : (0)) + " *1000 RPM"
         }
 
         Rectangle {
@@ -71,20 +71,6 @@ Item {
         }
     }
 
-    Row{
-        spacing: 10
-        anchors.horizontalCenter: parent.horizontalCenter
-        y: parent.height/2 + 145
-        Image{
-            id: hotTempWarning
-            source: "assets/temperature.png"
-            height:50
-            width:50
-            /*initially, the warning is not visible [active]*/
-            visible: hotTemp
-        }
-    }
-
     Rectangle {
         id: needle
         y: 217
@@ -94,7 +80,7 @@ Item {
         anchors.horizontalCenterOffset: 0
         width: 13
         height: 153
-        color: currentAngle>speedThreshold? "red" : "#7b3131"
+        color:  ((currentAngle>speedThreshold)&&(engineState=="On"))? "red" : "#7b3131"
 
         Rectangle {
             id: rectTip
@@ -110,12 +96,12 @@ Item {
             origin.x:6.5
             NumberAnimation on angle {
                 id: meterAnimation
-                /*if engine is turned off, the slider has no effect on the needle anymore*/
-                from:     currentAngle+initialAngle+1 /* +1 to make the needle slightly vibrates */
-                to:       currentAngle+initialAngle
-                duration: 10
-                running:  true
-                loops:Animation.Infinite
+                /* +1 to make the needle slightly vibrates */
+                from:     currentAngle+initialAngle+1
+                to:       engineState=="On"? currentAngle+initialAngle : initialAngle
+                /* to make time-to-zero relative to the last speed */
+                duration: engineState=="On"? 10 : returnToZeroTime
+                loops:    Animation.Infinite
             }
         }
 
@@ -126,22 +112,18 @@ Item {
 
             onTriggered: {
                 /* set running to false to avoid animation loops */
-                meterAnimation.stop()
+                meterAnimation.running = false
             }
         }
-
     }
 
     function engineTurnedOff(){
-        needle.color= "#7b3131"
-        current_speed.text = 0 + " *1000 RPM"
-        meterAnimation.to=initialAngle
-        meterAnimation.duration=returnToZeroTime
+        engineState="Off"
         needleTimer.start()
     }
 
-    function switchHotTempWarning(){
-        hotTemp= !hotTemp
+    function engineTurnedOn(){
+        engineState="On"
+        meterAnimation.running = true
     }
-
 }
